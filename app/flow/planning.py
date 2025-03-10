@@ -337,13 +337,15 @@ class PlanningFlow(BaseFlow):
             plan_text += "Steps:\n"
 
             status_marks = PlanStepStatus.get_status_marks()
-            
+
             for i, (step, status, notes) in enumerate(
                 zip(steps, step_statuses, step_notes)
             ):
                 # Use status marks to indicate step status
-                status_mark = status_marks.get(status, status_marks[PlanStepStatus.NOT_STARTED.value])
-                
+                status_mark = status_marks.get(
+                    status, status_marks[PlanStepStatus.NOT_STARTED.value]
+                )
+
                 plan_text += f"{i}. {status_mark} {step}\n"
                 if notes:
                     plan_text += f"   Notes: {notes}\n"

@@ -130,10 +130,6 @@ python run_flow.py
 
 或通过 📧 邮件联系 @mannaandpoem：mannaandpoem@gmail.com
 
-## 发展路线
-
-- [ ] 提高用户界面的视觉吸引力，以创建更直观和无缝的用户体验。
-
 ## 交流群
 
 加入我们的飞书交流群，与其他开发者分享经验！

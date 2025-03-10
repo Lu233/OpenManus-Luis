@@ -130,10 +130,6 @@ We welcome any friendly suggestions and helpful contributions! Just create issue
 
 Or contact @mannaandpoem via 📧email: mannaandpoem@gmail.com
 
-## Roadmap
-
-- [ ] Improve the UI’s visual appeal to create a more intuitive and seamless user experience.
-
 ## Community Group
 Join our networking group on Feishu and share your experience with other developers!
 
