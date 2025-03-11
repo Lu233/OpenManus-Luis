@@ -1,7 +1,5 @@
 import asyncio
-import threading
 import uuid
-import webbrowser
 from datetime import datetime
 from json import dumps
 
@@ -175,7 +173,8 @@ async def task_events(task_id: str):
 
         task = task_manager.tasks.get(task_id)
         if task:
-            yield f"event: status\ndata: {dumps({'type': 'status', 'status': task.status, 'steps': task.steps})}\n\n"
+            status_data = {"type": "status", "status": task.status, "steps": task.steps}
+            yield f"event: status\ndata: {dumps(status_data)}\n\n"
 
         while True:
             try:
@@ -193,7 +192,12 @@ async def task_events(task_id: str):
                 elif event["type"] == "step":
                     task = task_manager.tasks.get(task_id)
                     if task:
-                        yield f"event: status\ndata: {dumps({'type': 'status', 'status': task.status, 'steps': task.steps})}\n\n"
+                        status_data = {
+                            "type": "status",
+                            "status": task.status,
+                            "steps": task.steps,
+                        }
+                        yield f"event: status\ndata: {dumps(status_data)}\n\n"
                     yield f"event: {event['type']}\ndata: {formatted_event}\n\n"
                 elif event["type"] in ["think", "tool", "act", "run"]:
                     yield f"event: {event['type']}\ndata: {formatted_event}\n\n"
@@ -244,12 +248,7 @@ async def generic_exception_handler(request: Request, exc: Exception):
     )
 
 
-def open_local_browser():
-    webbrowser.open_new_tab("http://localhost:5172")
-
-
 if __name__ == "__main__":
     import uvicorn
 
-    threading.Timer(3, open_local_browser).start()
     uvicorn.run(app, host="localhost", port=5172)
