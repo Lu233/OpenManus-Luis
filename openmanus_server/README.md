@@ -46,9 +46,7 @@ uv pip install -r openmanus_server/mcp_requirements.txt
 ```
 
 ## Demo display
-<video src="./assets/demo.mp4" data-canonical-src="./assets/demo.mp4" controls="controls" muted="muted" class="d-block rounded-bottom-2 border-top width-fit" style="max-height:640px; min-height: 200px"></video>
-
-
+https://github.com/user-attachments/assets/177b1f50-422f-4c2e-ab7d-1f3d7ff27679
 
 ## 📖 Usage
 
