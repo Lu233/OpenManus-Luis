@@ -7,12 +7,9 @@ English | [中文](README_zh.md)
 
 # 👋 OpenManus
 
-[Official Website](https://openmanus.github.io/)
-
 Manus is incredible, but OpenManus can achieve any idea without an *Invite Code* 🛫!
 
-Our team
-members [@mannaandpoem](https://github.com/mannaandpoem) [@XiangJinyu](https://github.com/XiangJinyu) [@MoshiQAQ](https://github.com/MoshiQAQ) [@didiforgithub](https://github.com/didiforgithub) [@stellaHSR](https://github.com/stellaHSR), we are from [@MetaGPT](https://github.com/geekan/MetaGPT). The prototype is launched within 3 hours and we are keeping building!
+Our team members [@Xinbin Liang](https://github.com/mannaandpoem) and [@Jinyu Xiang](https://github.com/XiangJinyu) (core authors), along with [@Zhaoyang Yu](https://github.com/MoshiQAQ), [@Jiayi Zhang](https://github.com/didiforgithub), and [@Sirui Hong](https://github.com/stellaHSR), we are from [@MetaGPT](https://github.com/geekan/MetaGPT). The prototype is launched within 3 hours and we are keeping building!
 
 It's a simple implementation, so we welcome any suggestions, contributions, and feedback!
 
@@ -129,10 +126,6 @@ python run_flow.py
 We welcome any friendly suggestions and helpful contributions! Just create issues or submit pull requests.
 
 Or contact @mannaandpoem via 📧email: mannaandpoem@gmail.com
-
-## Roadmap
-
-- [ ] Improve the UI’s visual appeal to create a more intuitive and seamless user experience.
 
 ## Community Group
 Join our networking group on Feishu and share your experience with other developers!

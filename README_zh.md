@@ -7,8 +7,6 @@
 
 # 👋 OpenManus
 
-[官方网站](https://openmanus.github.io/)
-
 Manus 非常棒，但 OpenManus 无需邀请码即可实现任何创意 🛫！
 
 我们的团队成员 [@mannaandpoem](https://github.com/mannaandpoem) [@XiangJinyu](https://github.com/XiangJinyu) [@MoshiQAQ](https://github.com/MoshiQAQ) [@didiforgithub](https://github.com/didiforgithub) https://github.com/stellaHSR 来自 [@MetaGPT](https://github.com/geekan/MetaGPT) 组织，我们在 3
@@ -129,10 +127,6 @@ python run_flow.py
 我们欢迎任何友好的建议和有价值的贡献！可以直接创建 issue 或提交 pull request。
 
 或通过 📧 邮件联系 @mannaandpoem：mannaandpoem@gmail.com
-
-## 发展路线
-
-- [ ] 提高用户界面的视觉吸引力，以创建更直观和无缝的用户体验。
 
 ## 交流群
 
