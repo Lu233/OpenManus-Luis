@@ -16,7 +16,7 @@ This MCP server provides access to the following OpenManus tools:
 
 ### Prerequisites
 
-- Python 3.10+ 
+- Python 3.10+
 - OpenManus project dependencies
 
 ### Installation Steps
@@ -127,4 +127,4 @@ uv run openmanus_server/openmanus_client_example.py openmanus_server/openmanus_s
 
 ## 📄 License
 
-Same license as the OpenManus project 
+Same license as the OpenManus project

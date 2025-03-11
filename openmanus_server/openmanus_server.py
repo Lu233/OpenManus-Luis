@@ -1,11 +1,13 @@
-from typing import Optional
+import argparse
 import asyncio
 import json
-import argparse
-from mcp.server.fastmcp import FastMCP
 import logging
 import os
 import sys
+from typing import Optional
+
+from mcp.server.fastmcp import FastMCP
+
 
 # Add current directory to Python path
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -15,17 +17,17 @@ sys.path.insert(0, current_dir)
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger("mcp-server")
 
 # Import OpenManus tools
 from app.tool.browser_use_tool import BrowserUseTool
+from app.tool.file_saver import FileSaver
 from app.tool.google_search import GoogleSearch
 from app.tool.python_execute import PythonExecute
-from app.tool.file_saver import FileSaver
 from app.tool.terminate import Terminate
+
 
 # Initialize FastMCP server
 openmanus = FastMCP("openmanus")
@@ -36,6 +38,7 @@ google_search_tool = GoogleSearch()
 python_execute_tool = PythonExecute()
 file_saver_tool = FileSaver()
 terminate_tool = Terminate()
+
 
 # Browser tool
 @openmanus.tool()
@@ -49,7 +52,7 @@ async def browser_use(
     tab_id: Optional[int] = None,
 ) -> str:
     """Execute various browser operations.
-    
+
     Args:
         action: The browser operation to execute, possible values include:
             - navigate: Navigate to specified URL
@@ -79,9 +82,10 @@ async def browser_use(
         text=text,
         script=script,
         scroll_amount=scroll_amount,
-        tab_id=tab_id
+        tab_id=tab_id,
     )
     return json.dumps(result.model_dump())
+
 
 @openmanus.tool()
 async def get_browser_state() -> str:
@@ -90,11 +94,12 @@ async def get_browser_state() -> str:
     result = await browser_tool.get_current_state()
     return json.dumps(result.model_dump())
 
+
 # Google search tool
 @openmanus.tool()
 async def google_search(query: str, num_results: int = 10) -> str:
     """Execute Google search and return list of relevant links.
-    
+
     Args:
         query: Search query
         num_results: Number of results to return (default is 10)
@@ -103,11 +108,12 @@ async def google_search(query: str, num_results: int = 10) -> str:
     results = await google_search_tool.execute(query=query, num_results=num_results)
     return json.dumps(results)
 
+
 # Python execution tool
 @openmanus.tool()
 async def python_execute(code: str, timeout: int = 5) -> str:
     """Execute Python code and return results.
-    
+
     Args:
         code: Python code to execute
         timeout: Execution timeout in seconds
@@ -116,25 +122,29 @@ async def python_execute(code: str, timeout: int = 5) -> str:
     result = await python_execute_tool.execute(code=code, timeout=timeout)
     return json.dumps(result)
 
+
 # File saver tool
 @openmanus.tool()
 async def file_saver(content: str, file_path: str, mode: str = "w") -> str:
     """Save content to local file.
-    
+
     Args:
         content: Content to save
         file_path: File path
         mode: File open mode (default is 'w')
     """
     logger.info(f"Saving file: {file_path}")
-    result = await file_saver_tool.execute(content=content, file_path=file_path, mode=mode)
+    result = await file_saver_tool.execute(
+        content=content, file_path=file_path, mode=mode
+    )
     return result
+
 
 # Terminate tool
 @openmanus.tool()
 async def terminate(status: str) -> str:
     """Terminate program execution.
-    
+
     Args:
         status: Termination status, can be 'success' or 'failure'
     """
@@ -142,44 +152,45 @@ async def terminate(status: str) -> str:
     result = await terminate_tool.execute(status=status)
     return result
 
+
 # Clean up resources
 async def cleanup():
     """Clean up all tool resources"""
     logger.info("Cleaning up resources")
     await browser_tool.cleanup()
 
+
 # Register cleanup function
 import atexit
+
+
 atexit.register(lambda: asyncio.run(cleanup()))
+
 
 def parse_args():
     """Parse command line arguments"""
     parser = argparse.ArgumentParser(description="OpenManus MCP Server")
     parser.add_argument(
-        "--transport", 
-        choices=["stdio", "http"], 
+        "--transport",
+        choices=["stdio", "http"],
         default="stdio",
-        help="Communication method: stdio or http (default: stdio)"
+        help="Communication method: stdio or http (default: stdio)",
     )
     parser.add_argument(
-        "--host", 
-        default="127.0.0.1", 
-        help="HTTP server host (default: 127.0.0.1)"
+        "--host", default="127.0.0.1", help="HTTP server host (default: 127.0.0.1)"
     )
     parser.add_argument(
-        "--port", 
-        type=int, 
-        default=8000, 
-        help="HTTP server port (default: 8000)"
+        "--port", type=int, default=8000, help="HTTP server port (default: 8000)"
     )
     return parser.parse_args()
 
+
 if __name__ == "__main__":
     args = parse_args()
-    
+
     if args.transport == "stdio":
         logger.info("Starting OpenManus server (stdio mode)")
         openmanus.run(transport="stdio")
     else:
         logger.info(f"Starting OpenManus server (HTTP mode) at {args.host}:{args.port}")
-        openmanus.run(transport="http", host=args.host, port=args.port) 
+        openmanus.run(transport="http", host=args.host, port=args.port)
