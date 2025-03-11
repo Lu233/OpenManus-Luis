@@ -32,3 +32,5 @@ class Manus(ToolCallAgent):
             PythonExecute(), GoogleSearch(), BrowserUseTool(), FileSaver(), Terminate()
         )
     )
+
+    max_steps: int = 20
