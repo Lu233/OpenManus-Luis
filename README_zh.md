@@ -1,6 +1,7 @@
 [English](README.md) | 中文
 
-[![GitHub stars](https://img.shields.io/github/stars/mannaandpoem/OpenManus?style=social)](https://github.com/mannaandpoem/OpenManus) &ensp;
+[![GitHub stars](https://img.shields.io/github/stars/mannaandpoem/OpenManus?style=social)](https://github.com/mannaandpoem/OpenManus/stargazers)
+&ensp;
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) &ensp;
 [![Discord Follow](https://dcbadge.vercel.app/api/server/DYn29wFk9z?style=flat)](https://discord.gg/DYn29wFk9z)
 
@@ -126,10 +127,6 @@ python run_flow.py
 我们欢迎任何友好的建议和有价值的贡献！可以直接创建 issue 或提交 pull request。
 
 或通过 📧 邮件联系 @mannaandpoem：mannaandpoem@gmail.com
-
-## 发展路线
-
-- [ ] 提高用户界面的视觉吸引力，以创建更直观和无缝的用户体验。
 
 ## 交流群
 
