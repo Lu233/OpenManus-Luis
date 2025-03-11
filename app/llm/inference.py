@@ -38,7 +38,7 @@ class LLM:
         self, config_name: str = "default", llm_config: Optional[LLMSettings] = None
     ):
         if not hasattr(
-                self, "initialized"
+            self, "initialized"
         ):  # Only initialize if not already initialized
             llm_config = llm_config or config.llm
             llm_config = llm_config.get(config_name, llm_config["default"])
@@ -214,7 +214,7 @@ class LLM:
                 for substring in ["localhost", "127.0.0.1", "0.0.0.0"]
             )
         if self.model and (
-                self.model.startswith("ollama") or "local" in self.model.lower()
+            self.model.startswith("ollama") or "local" in self.model.lower()
         ):
             return True
         return False
@@ -248,7 +248,7 @@ class LLM:
             return base64.b64encode(image_file.read()).decode("utf-8")
 
     def prepare_messages(
-            self, text: str, image_path: Optional[str] = None
+        self, text: str, image_path: Optional[str] = None
     ) -> List[dict]:
         """
         Prepare messages for completion, including multimodal content if needed.
@@ -273,7 +273,7 @@ class LLM:
         return messages
 
     def do_multimodal_completion(
-            self, text: str, image_path: str
+        self, text: str, image_path: str
     ) -> Tuple[Any, float, float]:
         """
         Perform a multimodal completion with text and image.
