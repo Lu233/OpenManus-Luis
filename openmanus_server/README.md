@@ -52,24 +52,25 @@ uv pip install -r openmanus_server/mcp_requirements.txt
 
 ## 📖 Usage
 
-### Testing your server with Claude for Desktop
+### 1. Testing your server with Claude for Desktop 🖥️
 
-<Note>
-Claude for Desktop is not yet available on Linux. Linux users can build an MCP client that connects to the server we just built.
-</Note>
+> ⚠️ **Note**: Claude for Desktop is not yet available on Linux. Linux users can build an MCP client that connects to the server we just built.
 
-First, make sure you have Claude for Desktop installed. [You can install the latest version
-here.](https://claude.ai/download) If you already have Claude for Desktop, **make sure it's updated to the latest version.**
+#### Step 1: Installation Check ✅
+First, make sure you have Claude for Desktop installed. [You can install the latest version here](https://claude.ai/download). If you already have Claude for Desktop, **make sure it's updated to the latest version**.
 
+#### Step 2: Configuration Setup ⚙️
 We'll need to configure Claude for Desktop for this server you want to use. To do this, open your Claude for Desktop App configuration at `~/Library/Application Support/Claude/claude_desktop_config.json` in a text editor. Make sure to create the file if it doesn't exist.
 
-```
+```bash
 vim ~/Library/Application\ Support/Claude/claude_desktop_config.json
 ```
-You'll then add your servers in the mcpServers key. The MCP UI elements will only show up in Claude for Desktop if at least one server is properly configured.
+
+#### Step 3: Server Configuration 🔧
+You'll then add your servers in the `mcpServers` key. The MCP UI elements will only show up in Claude for Desktop if at least one server is properly configured.
 
 In this case, we'll add our single Openmanus server like so:
-```
+```json
 {
     "mcpServers": {
         "openmanus": {
@@ -84,28 +85,43 @@ In this case, we'll add our single Openmanus server like so:
     }
 }
 ```
-* ! You may need to put the full path to the uv executable in the command field. You can get this by running ```which uv``` on MacOS/Linux or ```where uv``` on Windows.
 
+> 💡 **Tip**: You may need to put the full path to the uv executable in the command field. You can get this by running:
+> - MacOS/Linux: `which uv`
+> - Windows: `where uv`
+
+#### Step 4: Understanding the Configuration 📝
 This tells Claude for Desktop:
+1. There's an MCP server named "openmanus" 🔌
+2. To launch it by running `uv --directory /ABSOLUTE/PATH/TO/OpenManus/openmanus_server run openmanus_server.py` 🚀
 
-1. There's an MCP server named "openmanus"
-2. To launch it by running uv --directory /ABSOLUTE/PATH/TO/OpenManus/openmanus_server run openmanus_server.py
-
+#### Step 5: Activation 🔄
 Save the file, and restart Claude for Desktop.
 
+#### Step 6: Verification ✨
 Let's make sure Claude for Desktop is picking up the six tools we've exposed in our `openmanus` server. You can do this by looking for the hammer icon ![hammer icon](./assets/claude-desktop-mcp-hammer-icon.svg)
+![tools_in_claude](./assets/1.jpg)
 
-## 💻 Client Example
+After clicking on the hammer icon, you should see tools listed:
+![alvaliable_tools_list](./assets/2.png)
 
-Check out `mcp_client_example.py` to learn how to connect to the server and call tools using the MCP client.
+#### Ready to Test! 🎉
+**Now, you can test the openmanus server in Claude for Desktop**:
+* 🔍 Try to find the recent news about Manus AI agent, and write a post for me!
 
-### Running the Client Example
 
+
+### 💻 2. Testing with simple Client Example
+
+Check out `openmanus_client_example.py` to test the openmanus server using the MCP client.
+
+```
+uv run openmanus_server/openmanus_client_example.py openmanus_server/openmanus_server.py
+```
 
 
 ## 🔒 Security Considerations
 
-- By default, the HTTP server only listens on localhost (127.0.0.1) and is not exposed externally
 - When using in production, ensure proper authentication and authorization mechanisms are in place
 - The Python execution tool has timeout limits to prevent long-running code
 
