@@ -144,6 +144,8 @@ class BaseAgent(BaseModel, ABC):
                 results.append(f"Step {self.current_step}: {step_result}")
 
             if self.current_step >= self.max_steps:
+                self.current_step = 0  # setting back to 0 when reached max steps
+                self.state = AgentState.IDLE  # setting the status
                 results.append(f"Terminated: Reached max steps ({self.max_steps})")
 
         return "\n".join(results) if results else "No steps executed"
