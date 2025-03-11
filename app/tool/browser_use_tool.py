@@ -11,6 +11,7 @@ from pydantic_core.core_schema import ValidationInfo
 
 from app.tool.base import BaseTool, ToolResult
 
+MAX_LENGTH = 2000
 
 _BROWSER_DESCRIPTION = """
 Interact with a web browser to perform various actions such as navigation, element interaction,
@@ -180,7 +181,7 @@ class BrowserUseTool(BaseTool):
 
                 elif action == "get_html":
                     html = await context.get_page_html()
-                    truncated = html[:2000] + "..." if len(html) > 2000 else html
+                    truncated = html[:MAX_LENGTH] + "..." if len(html) > MAX_LENGTH else html
                     return ToolResult(output=truncated)
 
                 elif action == "get_text":
