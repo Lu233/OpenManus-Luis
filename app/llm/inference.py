@@ -1,6 +1,6 @@
-from typing import Dict, List, Literal, Optional, Union, Tuple, Any
-import os
 import base64
+import os
+from typing import Any, Dict, List, Literal, Optional, Tuple, Union
 
 import litellm
 from litellm import completion, completion_cost
@@ -9,12 +9,17 @@ from litellm.exceptions import (
     RateLimitError,
     ServiceUnavailableError,
 )
-from tenacity import retry, stop_after_attempt, wait_random_exponential, retry_if_exception_type
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_random_exponential,
+)
 
 from app.config import LLMSettings, config
+from app.llm.cost import Cost
 from app.logger import logger
 from app.schema import Message
-from app.llm.cost import Cost
 
 
 class LLM:
@@ -32,16 +37,20 @@ class LLM:
     def __init__(
         self, config_name: str = "default", llm_config: Optional[LLMSettings] = None
     ):
-        if not hasattr(self, "initialized"):  # Only initialize if not already initialized
+        if not hasattr(
+                self, "initialized"
+        ):  # Only initialize if not already initialized
             llm_config = llm_config or config.llm
             llm_config = llm_config.get(config_name, llm_config["default"])
-            
+
             self.model = getattr(llm_config, "model", "gpt-3.5-turbo")
             self.max_tokens = getattr(llm_config, "max_tokens", 4096)
             self.temperature = getattr(llm_config, "temperature", 0.7)
             self.top_p = getattr(llm_config, "top_p", 0.9)
             self.api_type = getattr(llm_config, "api_type", "openai")
-            self.api_key = getattr(llm_config, "api_key", os.environ.get("OPENAI_API_KEY", ""))
+            self.api_key = getattr(
+                llm_config, "api_key", os.environ.get("OPENAI_API_KEY", "")
+            )
             self.api_version = getattr(llm_config, "api_version", "")
             self.base_url = getattr(llm_config, "base_url", "https://api.openai.com/v1")
             self.timeout = getattr(llm_config, "timeout", 60)
@@ -49,14 +58,14 @@ class LLM:
             self.retry_min_wait = getattr(llm_config, "retry_min_wait", 1)
             self.retry_max_wait = getattr(llm_config, "retry_max_wait", 10)
             self.custom_llm_provider = getattr(llm_config, "custom_llm_provider", None)
-            
+
             # Get model info if available
             self.model_info = None
             try:
                 self.model_info = litellm.get_model_info(self.model)
             except Exception as e:
                 logger.warning(f"Could not get model info for {self.model}: {e}")
-            
+
             # Configure litellm
             if self.api_type == "azure":
                 litellm.api_base = self.base_url
@@ -66,17 +75,17 @@ class LLM:
                 litellm.api_key = self.api_key
                 if self.base_url:
                     litellm.api_base = self.base_url
-            
+
             # Initialize cost tracker
             self.cost_tracker = Cost()
             self.initialized = True
-            
+
             # Initialize completion function
             self._initialize_completion_function()
 
     def _initialize_completion_function(self):
         """Initialize the completion function with retry logic"""
-        
+
         def attempt_on_error(retry_state):
             logger.error(
                 f"{retry_state.outcome.exception()}. Attempt #{retry_state.attempt_number}"
@@ -98,7 +107,7 @@ class LLM:
             model_name = self.model
             if self.api_type == "azure":
                 model_name = f"azure/{self.model}"
-                
+
             # Set default parameters if not provided
             if "max_tokens" not in kwargs:
                 kwargs["max_tokens"] = self.max_tokens
@@ -108,9 +117,9 @@ class LLM:
                 kwargs["top_p"] = self.top_p
             if "timeout" not in kwargs:
                 kwargs["timeout"] = self.timeout
-                
+
             kwargs["model"] = model_name
-            
+
             # Add API credentials if not in kwargs
             if "api_key" not in kwargs:
                 kwargs["api_key"] = self.api_key
@@ -120,10 +129,10 @@ class LLM:
                 kwargs["api_version"] = self.api_version
             if "custom_llm_provider" not in kwargs and self.custom_llm_provider:
                 kwargs["custom_llm_provider"] = self.custom_llm_provider
-                
+
             resp = completion(**kwargs)
             return resp
-            
+
         self._completion = wrapper
 
     @staticmethod
@@ -169,22 +178,24 @@ class LLM:
     def _calculate_and_track_cost(self, response) -> float:
         """
         Calculate and track the cost of an LLM API call.
-        
+
         Args:
             response: The response from litellm
-            
+
         Returns:
             float: The calculated cost
         """
         try:
             # Use litellm's completion_cost function
             cost = completion_cost(completion_response=response)
-            
+
             # Add the cost to our tracker
             if cost > 0:
                 self.cost_tracker.add_cost(cost)
-                logger.info(f"Added cost: ${cost:.6f}, Total: ${self.cost_tracker.accumulated_cost:.6f}")
-            
+                logger.info(
+                    f"Added cost: ${cost:.6f}, Total: ${self.cost_tracker.accumulated_cost:.6f}"
+                )
+
             return cost
         except Exception as e:
             logger.warning(f"Cost calculation failed: {e}")
@@ -193,7 +204,7 @@ class LLM:
     def is_local(self) -> bool:
         """
         Check if the model is running locally.
-        
+
         Returns:
             bool: True if the model is running locally, False otherwise
         """
@@ -202,46 +213,50 @@ class LLM:
                 substring in self.base_url
                 for substring in ["localhost", "127.0.0.1", "0.0.0.0"]
             )
-        if self.model and (self.model.startswith("ollama") or "local" in self.model.lower()):
+        if self.model and (
+                self.model.startswith("ollama") or "local" in self.model.lower()
+        ):
             return True
         return False
 
     def do_completion(self, *args, **kwargs) -> Tuple[Any, float, float]:
         """
         Perform a completion request and track cost.
-        
+
         Returns:
             Tuple[Any, float, float]: (response, current_cost, accumulated_cost)
         """
         response = self._completion(*args, **kwargs)
-        
+
         # Calculate and track cost
         current_cost = self._calculate_and_track_cost(response)
-        
+
         return response, current_cost, self.cost_tracker.accumulated_cost
 
     @staticmethod
     def encode_image(image_path: str) -> str:
         """
         Encode an image to base64.
-        
+
         Args:
             image_path: Path to the image file
-            
+
         Returns:
             str: Base64-encoded image
         """
         with open(image_path, "rb") as image_file:
             return base64.b64encode(image_file.read()).decode("utf-8")
 
-    def prepare_messages(self, text: str, image_path: Optional[str] = None) -> List[dict]:
+    def prepare_messages(
+            self, text: str, image_path: Optional[str] = None
+    ) -> List[dict]:
         """
         Prepare messages for completion, including multimodal content if needed.
-        
+
         Args:
             text: Text content
             image_path: Optional path to an image file
-            
+
         Returns:
             List[dict]: Formatted messages
         """
@@ -257,14 +272,16 @@ class LLM:
             ]
         return messages
 
-    def do_multimodal_completion(self, text: str, image_path: str) -> Tuple[Any, float, float]:
+    def do_multimodal_completion(
+            self, text: str, image_path: str
+    ) -> Tuple[Any, float, float]:
         """
         Perform a multimodal completion with text and image.
-        
+
         Args:
             text: Text prompt
             image_path: Path to the image file
-            
+
         Returns:
             Tuple[Any, float, float]: (response, current_cost, accumulated_cost)
         """
@@ -320,10 +337,10 @@ class LLM:
                     temperature=temperature or self.temperature,
                     stream=False,
                 )
-                
+
                 # Calculate and track cost
                 self._calculate_and_track_cost(response)
-                
+
                 if not response.choices or not response.choices[0].message.content:
                     raise ValueError("Empty or invalid response from LLM")
                 return response.choices[0].message.content
@@ -340,9 +357,9 @@ class LLM:
                 chunk_message = chunk.choices[0].delta.content or ""
                 collected_messages.append(chunk_message)
                 print(chunk_message, end="", flush=True)
-            
+
             # For streaming responses, cost is calculated on the last chunk
-            if hasattr(chunk, 'usage') and chunk.usage:
+            if hasattr(chunk, "usage") and chunk.usage:
                 self._calculate_and_track_cost(chunk)
 
             print()  # Newline after streaming
@@ -425,7 +442,7 @@ class LLM:
                 timeout=timeout,
                 **kwargs,
             )
-            
+
             # Calculate and track cost
             self._calculate_and_track_cost(response)
 
@@ -442,37 +459,37 @@ class LLM:
         except Exception as e:
             logger.error(f"Unexpected error in ask_tool: {e}")
             raise
-            
+
     def get_cost(self):
         """
         Get the current cost information.
-        
+
         Returns:
             dict: Dictionary containing accumulated cost and individual costs
         """
         return self.cost_tracker.get()
-        
+
     def log_cost(self):
         """
         Log the current cost information.
-        
+
         Returns:
             str: Formatted string of cost information
         """
         return self.cost_tracker.log()
-        
+
     def get_token_count(self, messages):
         """
         Get the token count for a list of messages.
-        
+
         Args:
             messages: List of messages
-            
+
         Returns:
             int: Token count
         """
         return litellm.token_counter(model=self.model, messages=messages)
-        
+
     def __str__(self):
         return f"LLM(model={self.model}, base_url={self.base_url})"
 
@@ -484,22 +501,25 @@ class LLM:
 if __name__ == "__main__":
     # Load environment variables if needed
     from dotenv import load_dotenv
+
     load_dotenv()
-    
+
     # Create LLM instance
     llm = LLM()
-    
+
     # Test text completion
     messages = llm.prepare_messages("Hello, how are you?")
     response, cost, total_cost = llm.do_completion(messages=messages)
     print(f"Response: {response['choices'][0]['message']['content']}")
     print(f"Cost: ${cost:.6f}, Total cost: ${total_cost:.6f}")
-    
+
     # Test multimodal if image path is available
     image_path = os.getenv("TEST_IMAGE_PATH")
     if image_path and os.path.exists(image_path):
         multimodal_response, mm_cost, mm_total_cost = llm.do_multimodal_completion(
             "What's in this image?", image_path
         )
-        print(f"Multimodal response: {multimodal_response['choices'][0]['message']['content']}")
+        print(
+            f"Multimodal response: {multimodal_response['choices'][0]['message']['content']}"
+        )
         print(f"Cost: ${mm_cost:.6f}, Total cost: ${mm_total_cost:.6f}")

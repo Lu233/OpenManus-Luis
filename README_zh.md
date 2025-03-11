@@ -145,4 +145,7 @@ python run_flow.py
 特别感谢 [anthropic-computer-use](https://github.com/anthropics/anthropic-quickstarts/tree/main/computer-use-demo)
 和 [browser-use](https://github.com/browser-use/browser-use) 为本项目提供的基础支持！
 
+此外，我们感谢 [AAAJ](https://github.com/metauto-ai/agent-as-a-judge)
+和 [MetaGPT](https://github.com/mannaandpoem/MetaGPT).
+
 OpenManus 由 MetaGPT 社区的贡献者共同构建，感谢这个充满活力的智能体开发者社区！
