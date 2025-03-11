@@ -7,8 +7,6 @@
 
 # 👋 OpenManus
 
-[官方网站](https://openmanus.github.io/)
-
 Manus 非常棒，但 OpenManus 无需邀请码即可实现任何创意 🛫！
 
 我们的团队成员 [@mannaandpoem](https://github.com/mannaandpoem) [@XiangJinyu](https://github.com/XiangJinyu) [@MoshiQAQ](https://github.com/MoshiQAQ) [@didiforgithub](https://github.com/didiforgithub) https://github.com/stellaHSR 来自 [@MetaGPT](https://github.com/geekan/MetaGPT) 组织，我们在 3

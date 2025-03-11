@@ -7,8 +7,6 @@ English | [中文](README_zh.md)
 
 # 👋 OpenManus
 
-[Official Website](https://openmanus.github.io/)
-
 Manus is incredible, but OpenManus can achieve any idea without an *Invite Code* 🛫!
 
 Our team
