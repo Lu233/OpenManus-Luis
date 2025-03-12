@@ -1,0 +1,17 @@
+# Global LLM configuration
+[llm]
+model = "qwen2.5-coder:14b"
+base_url = "http://127.0.0.1:11434/v1"
+api_key = "ollama" # Replace with your actual API key
+max_tokens = 4096
+temperature = 0.0
+
+# Optional configuration for specific LLM models
+[llm.vision]
+model = "minicpm-v:latest"
+base_url = "http://127.0.0.1:11434/v1"
+api_key = "ollama" # Replace with your actual API key
+
+[server]
+host = "localhost"
+port = 5172
