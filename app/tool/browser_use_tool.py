@@ -4,7 +4,7 @@ from typing import Optional
 
 from browser_use import Browser as BrowserUseBrowser
 from browser_use import BrowserConfig
-from browser_use.browser.context import BrowserContext, BrowserContextConfig
+from browser_use.browser.context import BrowserContext
 from browser_use.dom.service import DomService
 from pydantic import Field, field_validator
 from pydantic_core.core_schema import ValidationInfo
@@ -110,10 +110,7 @@ class BrowserUseTool(BaseTool):
             )
             self.browser = BrowserUseBrowser(browser_config)
         if self.context is None:
-            context_config = BrowserContextConfig(
-                browser_window_size={"width": 400, "height": 800}
-            )
-            self.context = await self.browser.new_context(context_config)
+            self.context = await self.browser.new_context()
             self.dom_service = DomService(await self.context.get_current_page())
         return self.context
 
