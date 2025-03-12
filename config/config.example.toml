@@ -20,3 +20,8 @@ temperature = 0.0
 model = "claude-3-5-sonnet"
 base_url = "https://api.openai.com/v1"
 api_key = "sk-..."
+
+# Server configuration
+[server]
+host = "localhost"
+port = 5172

@@ -1,9 +1,12 @@
 import asyncio
 import threading
+import tomllib
 import uuid
 import webbrowser
 from datetime import datetime
+from functools import partial
 from json import dumps
+from pathlib import Path
 
 from fastapi import Body, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -135,7 +138,7 @@ async def run_task(task_id: str, prompt: str):
             async def __call__(self, message):
                 import re
 
-                # 提取 - 后面的内容
+                # Extract - Subsequent Content
                 cleaned_message = re.sub(r"^.*? - ", "", message)
 
                 event_type = "log"
@@ -244,12 +247,32 @@ async def generic_exception_handler(request: Request, exc: Exception):
     )
 
 
-def open_local_browser():
-    webbrowser.open_new_tab("http://localhost:5172")
+def open_local_browser(config):
+    webbrowser.open_new_tab(f"http://{config['host']}:{config['port']}")
+
+
+def load_config():
+    try:
+        config_path = Path(__file__).parent / "config" / "config.toml"
+
+        with open(config_path, "rb") as f:
+            config = tomllib.load(f)
+
+        return {"host": config["server"]["host"], "port": config["server"]["port"]}
+    except FileNotFoundError:
+        raise RuntimeError(
+            "Configuration file not found, please check if config/fig.toml exists"
+        )
+    except KeyError as e:
+        raise RuntimeError(
+            f"The configuration file is missing necessary fields: {str(e)}"
+        )
 
 
 if __name__ == "__main__":
     import uvicorn
 
-    threading.Timer(3, open_local_browser).start()
-    uvicorn.run(app, host="localhost", port=5172)
+    config = load_config()
+    open_with_config = partial(open_local_browser, config)
+    threading.Timer(3, open_with_config).start()
+    uvicorn.run(app, host=config["host"], port=config["port"])
