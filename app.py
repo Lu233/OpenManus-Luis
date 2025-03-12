@@ -110,7 +110,6 @@ async def run_task(task_id: str, prompt: str):
         agent = Manus(
             name="Manus",
             description="A versatile agent that can solve various tasks using multiple tools",
-            max_steps=30,
         )
 
         async def on_think(thought):
