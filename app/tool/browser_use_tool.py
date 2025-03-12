@@ -4,7 +4,7 @@ from typing import Optional
 
 from browser_use import Browser as BrowserUseBrowser
 from browser_use import BrowserConfig
-from browser_use.browser.context import BrowserContext
+from browser_use.browser.context import BrowserContext, BrowserContextConfig
 from browser_use.dom.service import DomService
 from pydantic import Field, field_validator
 from pydantic_core.core_schema import ValidationInfo
@@ -103,9 +103,17 @@ class BrowserUseTool(BaseTool):
     async def _ensure_browser_initialized(self) -> BrowserContext:
         """Ensure browser and context are initialized."""
         if self.browser is None:
-            self.browser = BrowserUseBrowser(BrowserConfig(headless=False))
+            # 使用Chrome命令行参数设置窗口大小和位置
+            browser_config = BrowserConfig(
+                headless=False,
+                disable_security=True,
+            )
+            self.browser = BrowserUseBrowser(browser_config)
         if self.context is None:
-            self.context = await self.browser.new_context()
+            context_config = BrowserContextConfig(
+                browser_window_size={"width": 400, "height": 800}
+            )
+            self.context = await self.browser.new_context(context_config)
             self.dom_service = DomService(await self.context.get_current_page())
         return self.context
 
